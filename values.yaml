@@ -138,7 +138,7 @@ initSecurityContext:
 
 ciliumNetworkPolicy:
   enabled: false
-    allowed_labels: []
+  allowed_labels: []
     # - matchLabels: 
     #     app.kubernetes.io/name: ingress-nginx
     #     app.kubernetes.io/component: controller
