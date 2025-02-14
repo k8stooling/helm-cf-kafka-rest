@@ -1,0 +1,194 @@
+# Default values for cf-kafka-rest.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+## Image Info
+## ref: https://hub.docker.com/r/confluentinc/cp-kafka/
+image: confluentinc/cf-kafka-rest
+# imageTag: 
+
+## Specify a imagePullPolicy
+## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+imagePullPolicy: IfNotPresent
+
+## Specify an array of imagePullSecrets.
+## Secrets must be manually created in the namespace.
+## ref: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+imagePullSecrets:
+
+
+service:
+  type: ClusterIP
+  port: 8082
+
+
+## Kafka rest JVM Heap Option
+heapOptions: "-Xms512M -Xmx512M"
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+## Custom deployment annotations
+
+annotations: {}
+
+## Custom pod annotations
+podAnnotations: {}
+
+## Node labels for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+nodeSelector: {}
+
+## Taints to tolerate on node assignment:
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []
+
+## Pod scheduling constraints
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+affinity: {}
+
+## Kafka REST configuration options
+## ref: https://docs.confluent.io/current/kafka-rest/docs/config.html
+configurationOverrides:
+  # "consumer.request.timeout.ms": 5000
+
+## Additional env variables
+customEnv: {}
+  # ZOOKEEPER_SASL_ENABLED: "false"
+
+## Monitoring
+## Kafka REST JMX Settings
+## ref: https://docs.confluent.io/current/kafka-rest/docs/monitoring.html
+jmx:
+  port: 5555
+
+
+## If the Kafka Chart is disabled a URL of zookeeper are required to connect
+## e.g. ungaged-sparrow-cp-zookeeper:2181
+cp-zookeeper:
+  url: ""
+
+## If the Kafka Chart is disabled a URL and port are required to connect
+## e.g. gnoble-panther-cp-schema-registry:8081
+cp-schema-registry:
+  url: ""
+
+cp-kafka:
+  bootstrapServers: []
+  # - bs_host1
+  # - bs_host2
+  # - bs_host3
+
+extrainitContainers: []
+extraContainers: []
+extraVolumeMounts: []
+extraVolumes: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podSecurityContext: {}
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 65534
+  allowPrivilegeEscalation: false
+  seccompProfile:
+    type: RuntimeDefault
+
+initSecurityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 65534
+  allowPrivilegeEscalation: false
+  seccompProfile:
+    type: RuntimeDefault
+
+ciliumNetworkPolicy:
+  enabled: false
+    allowed_labels: []
+    # - matchLabels: 
+    #     app.kubernetes.io/name: ingress-nginx
+    #     app.kubernetes.io/component: controller
+    #     k8s:io.kubernetes.pod.namespace: ingress
+prometheus:
+  jmx:
+    enable: false
+
+ingress:
+  enabled: false
+  # className: ""
+  # annotations:
+  #   nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  # hosts:
+  #   - host: "example.com"
+  #     tls_secret: tls-secret
+  #     paths:
+  #       - path: /
+  #         pathType: ImplementationSpecific
+  # tls: true
+
+ca_crt: ""
+
+KyvernoPolicyException:
+  enabled: false
+  exceptions: []
+  # - policyName: restrict-image-registries
+  #   ruleNames:
+  #   - validate-registries
+  # - policyName: psp-restrict-adding-capabilities
+  #   ruleNames:
+  #   - autogen-allowed-capabilities
+
+topologySpreadConstraints:
+  enabled: false
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8082
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 3
+  
+livenessProbe:
+  httpGet:
+    path: / 
+    port: 8082
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 3

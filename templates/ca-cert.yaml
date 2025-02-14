@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  ca.crt: {{ .Values.ca_crt}}
+kind: Secret
+metadata:
+  name: ca.crt
+  labels:
+    {{- include "cf-kafka-rest.labels" . | nindent 4 }}
+data:
+  ca.crt:
+    {{ .Values.ca_crt | nindent 4 }}

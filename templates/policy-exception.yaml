@@ -1,0 +1,27 @@
+{{- if .Values.KyvernoPolicyException.enabled }}
+apiVersion: kyverno.io/v2beta1
+kind: PolicyException
+metadata:
+  name: {{ include "cf-kafka-rest.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "cf-kafka-rest.name" . }}
+    helm.sh/chart: {{ include "cf-kafka-rest.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    helm.sh/hook: pre-install
+spec:
+  match:
+    any:
+    - resources:
+        kinds:
+        - Pod
+        - Deployment
+        - StatefulSet
+        namespaces:
+        - {{ .Release.Namespace }}
+        names:
+        - {{ include "cf-kafka-rest.fullname" . }}*
+  exceptions:
+    {{- toYaml .Values.KyvernoPolicyException.exceptions | nindent 8}}
+{{- end }}

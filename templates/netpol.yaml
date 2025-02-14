@@ -1,0 +1,33 @@
+{{- if .Values.ciliumNetworkPolicy.enabled }}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "cf-kafka-rest.name" . }}-allow
+  labels:
+    {{- include "cf-kafka-rest.labels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "cf-kafka-rest.name" . }}
+  ingress:
+  {{- range .Values.ciliumNetworkPolicy.allowed_labels }}
+    - fromEndpoints:
+      - matchLabels:
+           {{- toYaml .matchLabels | nindent 10 }}
+      toPorts:
+      - ports:
+        - port: "8082"    # AMQP
+          protocol: TCP
+  {{- end }}
+  egress:
+  {{- range .Values.cp_kafka.bootstrapServers }}
+    - toFQDNs:
+      - matchName: {{ . }}
+      toPorts:
+      - ports:
+        - port: "9096"    # AMQP
+          protocol: TCP
+  {{- end }}
+    - toEntities:
+        - kube-apiserver
+{{- end }}
