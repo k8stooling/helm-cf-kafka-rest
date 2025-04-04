@@ -192,3 +192,6 @@ livenessProbe:
   periodSeconds: 20
   timeoutSeconds: 5
   failureThreshold: 3
+
+kafka_rest:
+  properties: ""

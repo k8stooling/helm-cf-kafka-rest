@@ -59,6 +59,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "cf-kafka-rest.fullname" . }}
                   key: client_password
+                  optional: true
           volumeMounts:
             - name: proxy-config-base
               mountPath: /etc/kafka-rest-config-base
